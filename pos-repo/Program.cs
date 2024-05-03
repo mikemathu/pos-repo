@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using pos_repo.Data;
+using pos_repo.Repositories;
+using pos_repo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 
 var app = builder.Build();
 
@@ -37,7 +41,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Item}/{action=GetAllItems}/{id?}");
 app.MapRazorPages();
 
 app.Run();

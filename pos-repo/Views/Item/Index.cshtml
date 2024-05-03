@@ -1,0 +1,66 @@
+﻿@model IEnumerable<pos_repo.Models.Item>
+
+@foreach (var item in Model)
+{
+    <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-4 col-sm-6 pb-4 pos-product" data-type="meat">
+        <a href="#" data-bs-toggle="modal" data-bs-target="#modalPosItem" data-item-id="@item.Id">
+            <div class="img" style="background-image: url('/images/@item.Image')"></div>
+
+            <div class="info">
+                <div class="title">@item.Name</div>
+                <div class="desc">@item.Description</div>
+                <div class="price">$@item.Price.ToString("0.00")</div>
+            </div>
+        </a>
+    </div>
+}
+
+@await Html.PartialAsync("./PartialView/_ItemPartialView")
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.pos-product').click(function () {
+                var itemId = $(this).data('item-id'); 
+                // AJAX to retrieve the item details from the server
+                $.ajax({
+                    url: '@Url.Action("GetItemDetails", "ItemController")',
+                    type: 'GET',
+                    data: { itemId: itemId },
+                    success: function (item) {
+                        // Update modal content with item details
+                        $('#modalItemImage').css('background-image', 'url(' + item.Image + ')');
+                        $('#modalItemName').text(item.Name);
+                        $('#modalItemDescription').text(item.Description);
+                        $('#modalItemPrice').text('$' + item.Price.toFixed(2));
+                        // Update other modal content as needed
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
+@* <script>
+    $(document).ready(function () {
+        $('.pos-product').click(function () {
+            var itemId = $(this).data('item-id');
+            var item = @Html.Raw(Json.Serialize(Model.FirstOrDefault(x => x.Id == itemId)));
+
+            $('#modalItemImage').css('background-image', 'url(' + item.Image + ')');
+            $('#modalItemName').text(item.Name);
+            $('#modalItemDescription').text(item.Description);
+            $('#modalItemPrice').text('$' + item.Price.toFixed(2));
+            // Update other modal content as needed
+        });
+    });
+
+</script> *@
+
+
